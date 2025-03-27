@@ -107,6 +107,21 @@ import SwiftUI
                                                     RoundedRectangle(cornerRadius: 4)
                                                         .strokeBorder(trackColor(track), lineWidth: 1)
                                                 )
+                                                .contextMenu {
+                                                    VStack(alignment: .leading, spacing: 4) {
+                                                        Text("Source Time:")
+                                                            .font(.caption)
+                                                            .foregroundStyle(.secondary)
+                                                        Text("\(formatTimeRange(segment.timeMapping.source))")
+                                                            .font(.caption)
+
+                                                        Text("Composition Time:")
+                                                            .font(.caption)
+                                                            .foregroundStyle(.secondary)
+                                                        Text("\(formatTimeRange(segment.timeMapping.target))")
+                                                            .font(.caption)
+                                                    }
+                                                }
 
                                             if track.mediaType == .video {
                                                 if let thumbnails = viewModel.thumbnails[track.id]?[segment] {
@@ -391,7 +406,7 @@ import SwiftUI
             guard !samples.isEmpty else { return }
 
             let stepX = width / CGFloat(samples.count - 1)
-            let maxPoints = Int(width)
+            let maxPoints = max(1, Int(width))
             let stride = max(1, samples.count / maxPoints)
 
             path.move(to: CGPoint(x: 0, y: height))
@@ -617,5 +632,11 @@ import SwiftUI
 @available(iOS 17.0, macOS 14.0, *) extension CompositionDebugView {
     private func trackColor(_ track: Track) -> Color {
         track.mediaType == .audio ? .green : .blue
+    }
+
+    private func formatTimeRange(_ range: CMTimeRange) -> String {
+        let start = Duration.seconds(range.start.seconds)
+        let end = Duration.seconds(range.end.seconds)
+        return "\(start.formatted(.time(pattern: .minuteSecond))) - \(end.formatted(.time(pattern: .minuteSecond)))"
     }
 }
