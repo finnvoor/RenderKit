@@ -20,11 +20,6 @@ import OSLog
     ) async throws -> ThumbnailStream? {
         guard !timeRange.isEmpty else { return nil }
 
-        let videoTracks = try await asset.loadTracks(withMediaType: .video)
-        guard let videoTrack = videoTracks.first else { return nil }
-
-        let duration = timeRange.duration.seconds
-
         let timePoints = stride(
             from: timeRange.start.seconds,
             to: timeRange.end.seconds,
@@ -50,7 +45,7 @@ import OSLog
 
                     for try await image in generator.images(for: timePoints) {
                         try continuation.yield(image.image)
-                        try await Task.yield()
+                        await Task.yield()
                     }
                     continuation.finish()
                 } catch {

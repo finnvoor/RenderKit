@@ -467,4 +467,11 @@ public extension CIImage {
         filter.colorSpace = CGColorSpaceCreateDeviceRGB()
         return filter.outputImage!
     }
+
+    func applyingWhitePointAdjust(color: CIColor) -> CIImage {
+        let filter = CIFilter.whitePointAdjust()
+        filter.inputImage = self
+        filter.color = color
+        return filter.outputImage!
+    }
 }

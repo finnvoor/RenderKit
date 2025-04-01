@@ -469,8 +469,8 @@ import SwiftUI
 
             if let videoComposition {
                 naturalSize = videoComposition.renderSize
-            } else if let videoTrack = compositionTracks.first(where: { $0.mediaType == .video }) {
-                naturalSize = try await videoTrack.load(.naturalSize)
+            } else {
+                naturalSize = composition.naturalSize
             }
 
             var tracks: [Track] = []
@@ -499,14 +499,14 @@ import SwiftUI
 
             self.tracks = tracks
 
-            async let waveforms = await loadWaveforms()
+            async let waveforms: () = await loadWaveforms()
             func loadAllThumbnails() async {
                 await loadThumbnails()
                 await loadPreviewThumbnails()
             }
-            async let thumbnails = await loadAllThumbnails()
+            async let thumbnails: () = await loadAllThumbnails()
 
-            await (waveforms, thumbnails)
+            _ = await (waveforms, thumbnails)
         }
 
         // MARK: Private
@@ -573,9 +573,6 @@ import SwiftUI
             let generator = ThumbnailGenerator()
 
             let videoTracks = tracks.filter { $0.mediaType == .video }
-
-            let maxConcurrentTasks = 2
-            var activeTasks = 0
 
             for track in videoTracks {
                 let trackId = track.id

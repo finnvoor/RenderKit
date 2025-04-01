@@ -101,7 +101,7 @@ import OSLog
                         break
                     }
 
-                    try await Task.yield()
+                    await Task.yield()
                 }
 
                 if currentSample >= samplesPerSegment {
@@ -122,7 +122,7 @@ import OSLog
                         let smoothed = (samples[i - 1] + samples[i] * 2 + samples[i + 1]) / 4
                         smoothedSamples.append(smoothed)
                     }
-                    try await Task.yield()
+                    await Task.yield()
                 }
 
                 smoothedSamples.append(samples[samples.count - 1])
@@ -131,7 +131,7 @@ import OSLog
                 allSamples.append((samplesPerSecond, samples))
             }
 
-            try await Task.yield()
+            await Task.yield()
         }
 
         return WaveformData(resolutions: allSamples)

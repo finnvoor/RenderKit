@@ -100,7 +100,6 @@ public class CIImageDisplayView: PlatformView {
         mtkView.enableSetNeedsDisplay = true
         mtkView.framebufferOnly = false
         mtkView.delegate = self
-        mtkView.presentsWithTransaction
 
         mtkView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(mtkView)
