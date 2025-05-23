@@ -79,6 +79,10 @@ public class CIImageDisplayView: PlatformView {
         self.image = image
     }
 
+    // MARK: Internal
+
+    let inFlightSemaphore = DispatchSemaphore(value: 3)
+
     // MARK: Private
 
     private let device: MTLDevice
@@ -118,9 +122,17 @@ extension CIImageDisplayView: MTKViewDelegate {
     public func mtkView(_: MTKView, drawableSizeWillChange _: CGSize) {}
 
     public func draw(in view: MTKView) {
-        guard let image,
-              let commandBuffer = commandQueue.makeCommandBuffer(),
+        guard let image else { return }
+
+        _ = inFlightSemaphore.wait(timeout: DispatchTime.distantFuture)
+
+        guard let commandBuffer = commandQueue.makeCommandBuffer(),
               let drawable = view.currentDrawable else { return }
+
+        let semaphore = inFlightSemaphore
+        commandBuffer.addCompletedHandler { _ in
+            semaphore.signal()
+        }
 
         let renderDestination = CIRenderDestination(
             width: Int(view.drawableSize.width),

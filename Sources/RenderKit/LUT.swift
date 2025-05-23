@@ -1,6 +1,6 @@
 import Accelerate
-import Foundation
 import CoreImage
+import Foundation
 #if canImport(UIKit)
 import UIKit
 #endif
